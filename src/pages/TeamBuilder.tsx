@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Lightbulb, X, Users, Star } from "lucide-react";
+import { Lightbulb, X, Users, Star, ArrowLeft } from "lucide-react";
 
 interface TeamMember {
   id: string;

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Star } from "lucide-react";
+import { Star, Users } from "lucide-react";
 
 interface MentorMatch {
   id: string;
