@@ -11,6 +11,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { X, Sparkles, ArrowLeft, GraduationCap } from "lucide-react";
+import { z } from "zod";
+
+const profileSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be less than 100 characters"),
+  department: z.string().trim().min(2, "Department must be at least 2 characters").max(100, "Department must be less than 100 characters"),
+  year: z.number().int().min(1, "Year must be at least 1").max(6, "Year must be at most 6"),
+  bio: z.string().trim().max(1000, "Bio must be less than 1000 characters").optional(),
+});
+
+const skillSchema = z.string().trim().min(2, "Skill must be at least 2 characters").max(50, "Skill must be less than 50 characters");
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -85,9 +95,20 @@ const Profile = () => {
   };
 
   const handleAddSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()]);
+    const trimmedSkill = skillInput.trim();
+    
+    // Validate skill
+    const validationResult = skillSchema.safeParse(trimmedSkill);
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
+    }
+
+    if (!skills.includes(trimmedSkill)) {
+      setSkills([...skills, trimmedSkill]);
       setSkillInput("");
+    } else {
+      toast.error("Skill already added");
     }
   };
 
@@ -124,8 +145,17 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.department) {
-      toast.error("Please fill in all required fields");
+    // Validate form data
+    const validationResult = profileSchema.safeParse({
+      name: formData.name.trim(),
+      department: formData.department.trim(),
+      year: parseInt(formData.year),
+      bio: formData.bio.trim() || undefined,
+    });
+
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
 
@@ -136,10 +166,10 @@ const Profile = () => {
         const { error } = await supabase
           .from("profiles")
           .update({
-            name: formData.name,
-            department: formData.department,
-            year: parseInt(formData.year),
-            bio: formData.bio,
+            name: validationResult.data.name,
+            department: validationResult.data.department,
+            year: validationResult.data.year,
+            bio: validationResult.data.bio || null,
           })
           .eq("id", profileId);
 
@@ -150,10 +180,10 @@ const Profile = () => {
           .from("profiles")
           .insert({
             user_id: userId,
-            name: formData.name,
-            department: formData.department,
-            year: parseInt(formData.year),
-            bio: formData.bio,
+            name: validationResult.data.name,
+            department: validationResult.data.department,
+            year: validationResult.data.year,
+            bio: validationResult.data.bio || null,
           })
           .select()
           .single();

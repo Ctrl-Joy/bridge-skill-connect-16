@@ -10,6 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Lightbulb, X, Users, Star, ArrowLeft } from "lucide-react";
+import { z } from "zod";
+
+const teamSchema = z.object({
+  name: z.string().trim().min(3, "Team name must be at least 3 characters").max(100, "Team name must be less than 100 characters"),
+});
+
+const skillSchema = z.string().trim().min(2, "Skill must be at least 2 characters").max(50, "Skill must be less than 50 characters");
 
 interface TeamMember {
   id: string;
@@ -30,9 +37,20 @@ const TeamBuilder = () => {
   const [teamName, setTeamName] = useState("");
 
   const handleAddSkill = () => {
-    if (skillInput.trim() && !requiredSkills.includes(skillInput.trim())) {
-      setRequiredSkills([...requiredSkills, skillInput.trim()]);
+    const trimmedSkill = skillInput.trim();
+    
+    // Validate skill
+    const validationResult = skillSchema.safeParse(trimmedSkill);
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
+      return;
+    }
+
+    if (!requiredSkills.includes(trimmedSkill)) {
+      setRequiredSkills([...requiredSkills, trimmedSkill]);
       setSkillInput("");
+    } else {
+      toast.error("Skill already added");
     }
   };
 
@@ -83,8 +101,10 @@ const TeamBuilder = () => {
   };
 
   const handleSaveTeam = async () => {
-    if (!teamName.trim()) {
-      toast.error("Please enter a team name");
+    // Validate team name
+    const validationResult = teamSchema.safeParse({ name: teamName.trim() });
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
       return;
     }
 
@@ -107,7 +127,7 @@ const TeamBuilder = () => {
       const { data: teamData, error: teamError } = await supabase
         .from("teams")
         .insert({
-          name: teamName,
+          name: validationResult.data.name,
           required_skills: requiredSkills,
           team_size: parseInt(teamSize),
           created_by: session.user.id,
