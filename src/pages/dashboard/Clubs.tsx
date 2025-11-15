@@ -1,120 +1,36 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, TrendingUp } from "lucide-react";
-import { toast } from "sonner";
+import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
 
-interface Club {
-  id: string;
-  name: string;
-  category: string;
-  description: string | null;
-}
-
-interface ClubWithMembers extends Club {
-  memberCount: number;
-  isMember: boolean;
-}
+const clubsData = [
+  {
+    name: "Coding Club",
+    category: "Technical",
+    members: 145,
+    skills: ["Programming", "Web Dev", "AI/ML"],
+  },
+  {
+    name: "Robotics Society",
+    category: "Technical",
+    members: 89,
+    skills: ["Electronics", "Embedded Systems", "Arduino"],
+  },
+  {
+    name: "Design Club",
+    category: "Creative",
+    members: 112,
+    skills: ["UI/UX", "Graphic Design", "Figma"],
+  },
+  {
+    name: "Entrepreneurship Cell",
+    category: "Business",
+    members: 203,
+    skills: ["Business", "Marketing", "Finance"],
+  },
+];
 
 const Clubs = () => {
-  const [clubs, setClubs] = useState<ClubWithMembers[]>([]);
-  const [profileId, setProfileId] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("user_id", session.user.id)
-      .single();
-
-    if (profileData) {
-      setProfileId(profileData.id);
-      await loadClubs(profileData.id);
-    }
-    setLoading(false);
-  };
-
-  const loadClubs = async (profId: string) => {
-    const { data: clubsData } = await supabase
-      .from("clubs")
-      .select("*");
-
-    if (clubsData) {
-      const clubsWithMembers = await Promise.all(
-        clubsData.map(async (club) => {
-          const { count } = await supabase
-            .from("club_members")
-            .select("*", { count: "exact", head: true })
-            .eq("club_id", club.id);
-
-          const { data: memberData } = await supabase
-            .from("club_members")
-            .select("id")
-            .eq("club_id", club.id)
-            .eq("profile_id", profId)
-            .maybeSingle();
-
-          return {
-            ...club,
-            memberCount: count || 0,
-            isMember: !!memberData,
-          };
-        })
-      );
-
-      setClubs(clubsWithMembers);
-    }
-  };
-
-  const handleJoinClub = async (clubId: string) => {
-    try {
-      await supabase.from("club_members").insert({
-        club_id: clubId,
-        profile_id: profileId,
-      });
-
-      toast.success("Joined club!");
-      loadClubs(profileId);
-    } catch (error: any) {
-      toast.error("Failed to join club");
-    }
-  };
-
-  const handleLeaveClub = async (clubId: string) => {
-    try {
-      await supabase
-        .from("club_members")
-        .delete()
-        .eq("club_id", clubId)
-        .eq("profile_id", profileId);
-
-      toast.success("Left club");
-      loadClubs(profileId);
-    } catch (error: any) {
-      toast.error("Failed to leave club");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  const myClubs = clubs.filter((c) => c.isMember);
-
   return (
     <div className="space-y-6">
       <div>
@@ -133,7 +49,7 @@ const Clubs = () => {
             <CardTitle className="text-lg">Total Clubs</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-primary">{clubs.length}</p>
+            <p className="text-3xl font-bold text-primary">24</p>
           </CardContent>
         </Card>
 
@@ -142,7 +58,7 @@ const Clubs = () => {
             <CardTitle className="text-lg">Your Clubs</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-primary">{myClubs.length}</p>
+            <p className="text-3xl font-bold text-primary">0</p>
           </CardContent>
         </Card>
 
@@ -151,7 +67,7 @@ const Clubs = () => {
             <CardTitle className="text-lg">Recommended</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-primary">{clubs.length - myClubs.length}</p>
+            <p className="text-3xl font-bold text-primary">5</p>
           </CardContent>
         </Card>
       </div>
@@ -160,16 +76,16 @@ const Clubs = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            All Clubs
+            Recommended Clubs
           </CardTitle>
           <CardDescription>
-            Join clubs that match your interests
+            Based on your skills and interests
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {clubs.map((club) => (
-              <Card key={club.id} className="hover:shadow-lg transition-shadow">
+            {clubsData.map((club) => (
+              <Card key={club.name} className="hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <div>
@@ -179,35 +95,44 @@ const Clubs = () => {
                       </Badge>
                     </div>
 
-                    {club.description && (
-                      <p className="text-sm text-muted-foreground">{club.description}</p>
-                    )}
-
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Users className="h-4 w-4" />
-                      <span>{club.memberCount} members</span>
+                      <span>{club.members} members</span>
                     </div>
 
-                    {club.isMember ? (
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => handleLeaveClub(club.id)}
-                      >
-                        Leave Club
-                      </Button>
-                    ) : (
-                      <Button
-                        className="w-full"
-                        onClick={() => handleJoinClub(club.id)}
-                      >
-                        Join Club
-                      </Button>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {club.skills.map((skill) => (
+                        <Badge key={skill} variant="outline">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <Button className="w-full">Join Club</Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Upcoming Events
+          </CardTitle>
+          <CardDescription>
+            Club activities and competitions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12">
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">
+              No upcoming events. Check back later!
+            </p>
           </div>
         </CardContent>
       </Card>

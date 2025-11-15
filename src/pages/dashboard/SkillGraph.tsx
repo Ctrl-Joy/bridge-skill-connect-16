@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SkillGraphVisualization } from "@/components/SkillGraphVisualization";
 import { Network, TrendingUp } from "lucide-react";
 
 interface Skill {
@@ -120,20 +119,19 @@ const SkillGraph = () => {
         <CardHeader>
           <CardTitle>Skill Connections</CardTitle>
           <CardDescription>
-            Interactive visualization of your skill network
+            See how your skills connect with other students
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {skills.length > 0 ? (
-            <SkillGraphVisualization skills={skills.map(s => s.skill_name)} />
-          ) : (
-            <div className="text-center py-12">
-              <Network className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Add skills to your profile to see the visualization
-              </p>
-            </div>
-          )}
+          <div className="text-center py-12">
+            <Network className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground mb-4">
+              Skill graph visualization coming soon
+            </p>
+            <p className="text-sm text-muted-foreground">
+              We're building an interactive graph to show skill connections across the university
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
