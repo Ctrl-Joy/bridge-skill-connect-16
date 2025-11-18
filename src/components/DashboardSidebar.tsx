@@ -23,6 +23,7 @@ import {
   FlaskConical,
   Award,
   GraduationCap,
+  Video,
 } from "lucide-react";
 
 const menuItems = [
@@ -30,6 +31,7 @@ const menuItems = [
   { title: "AI Skill Graph", url: "/dashboard/skill-graph", icon: Network },
   { title: "Find Mentor", url: "/dashboard/mentor", icon: UserPlus },
   { title: "Team Builder", url: "/dashboard/team-builder", icon: Users },
+  { title: "Video Conferencing", url: "/dashboard/video-call", icon: Video },
   { title: "Doubt Solver", url: "/dashboard/doubt-solver", icon: MessageCircleQuestion },
   { title: "Department Hub", url: "/dashboard/department-hub", icon: BookOpen },
   { title: "Clubs & Societies", url: "/dashboard/clubs", icon: Trophy },
