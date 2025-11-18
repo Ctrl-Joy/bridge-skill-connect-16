@@ -12,6 +12,7 @@ import SkillGraph from "./pages/dashboard/SkillGraph";
 import Profile from "./pages/Profile";
 import Mentor from "./pages/Mentor";
 import TeamBuilder from "./pages/TeamBuilder";
+import VideoCall from "./pages/dashboard/VideoCall";
 import DoubtSolver from "./pages/dashboard/DoubtSolver";
 import DepartmentHub from "./pages/dashboard/DepartmentHub";
 import Clubs from "./pages/dashboard/Clubs";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="skill-graph" element={<SkillGraph />} />
             <Route path="mentor" element={<Mentor />} />
             <Route path="team-builder" element={<TeamBuilder />} />
+            <Route path="video-call" element={<VideoCall />} />
             <Route path="doubt-solver" element={<DoubtSolver />} />
             <Route path="department-hub" element={<DepartmentHub />} />
             <Route path="clubs" element={<Clubs />} />
