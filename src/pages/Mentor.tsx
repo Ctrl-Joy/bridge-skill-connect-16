@@ -61,7 +61,11 @@ const Mentor = () => {
 
       if (error) throw error;
 
-      setMentors(data.mentors || []);
+      if (data?.message) {
+        toast.info(data.message);
+      }
+
+      setMentors(data?.mentors || []);
     } catch (error: any) {
       toast.error("Error loading mentors");
       console.error(error);
@@ -121,9 +125,9 @@ const Mentor = () => {
               <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">No mentors found</h3>
               <p className="text-muted-foreground mb-6">
-                Make sure you've added skills to your profile and generated embeddings
+                Add skills to your profile and generate embeddings to find mentor matches
               </p>
-              <Button onClick={() => navigate("/profile")}>Update Profile</Button>
+              <Button onClick={() => navigate("/profile")}>Add Skills to Profile</Button>
             </CardContent>
           </Card>
         ) : (
