@@ -14,6 +14,255 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          xp_requirement: number | null
+        }
+        Insert: {
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          xp_requirement?: number | null
+        }
+        Update: {
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          xp_requirement?: number | null
+        }
+        Relationships: []
+      }
+      club_members: {
+        Row: {
+          club_id: string
+          id: string
+          joined_at: string | null
+          profile_id: string
+          role: string | null
+        }
+        Insert: {
+          club_id: string
+          id?: string
+          joined_at?: string | null
+          profile_id: string
+          role?: string | null
+        }
+        Update: {
+          club_id?: string
+          id?: string
+          joined_at?: string | null
+          profile_id?: string
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_members_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "club_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clubs: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          required_skills: string[] | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          required_skills?: string[] | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          required_skills?: string[] | null
+        }
+        Relationships: []
+      }
+      department_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          department: string
+          id: string
+          profile_id: string
+          subject: string | null
+          title: string
+          year: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          department: string
+          id?: string
+          profile_id: string
+          subject?: string | null
+          title: string
+          year?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          department?: string
+          id?: string
+          profile_id?: string
+          subject?: string | null
+          title?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "department_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doubt_responses: {
+        Row: {
+          created_at: string | null
+          doubt_id: string
+          id: string
+          is_ai: boolean | null
+          profile_id: string | null
+          response_text: string
+        }
+        Insert: {
+          created_at?: string | null
+          doubt_id: string
+          id?: string
+          is_ai?: boolean | null
+          profile_id?: string | null
+          response_text: string
+        }
+        Update: {
+          created_at?: string | null
+          doubt_id?: string
+          id?: string
+          is_ai?: boolean | null
+          profile_id?: string | null
+          response_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doubt_responses_doubt_id_fkey"
+            columns: ["doubt_id"]
+            isOneToOne: false
+            referencedRelation: "doubts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doubt_responses_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doubts: {
+        Row: {
+          created_at: string | null
+          id: string
+          profile_id: string
+          question: string
+          status: string | null
+          subject: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          profile_id: string
+          question: string
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          profile_id?: string
+          question?: string
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doubts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          department: string
+          id: string
+          profile_id: string
+          replies_count: number | null
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          department: string
+          id?: string
+          profile_id: string
+          replies_count?: number | null
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          department?: string
+          id?: string
+          profile_id?: string
+          replies_count?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_posts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mentorships: {
         Row: {
           created_at: string
@@ -89,6 +338,78 @@ export type Database = {
           updated_at?: string
           user_id?: string
           year?: number
+        }
+        Relationships: []
+      }
+      research_applications: {
+        Row: {
+          applied_at: string | null
+          id: string
+          profile_id: string
+          project_id: string
+          status: string | null
+        }
+        Insert: {
+          applied_at?: string | null
+          id?: string
+          profile_id: string
+          project_id: string
+          status?: string | null
+        }
+        Update: {
+          applied_at?: string | null
+          id?: string
+          profile_id?: string
+          project_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_applications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_applications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_projects: {
+        Row: {
+          created_at: string | null
+          department: string
+          description: string | null
+          faculty: string
+          id: string
+          open_positions: number | null
+          required_skills: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          description?: string | null
+          faculty: string
+          id?: string
+          open_positions?: number | null
+          required_skills?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          description?: string | null
+          faculty?: string
+          id?: string
+          open_positions?: number | null
+          required_skills?: string[] | null
+          title?: string
         }
         Relationships: []
       }
@@ -189,6 +510,109 @@ export type Database = {
           team_size?: number
         }
         Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string | null
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string | null
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string | null
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_xp: {
+        Row: {
+          level: number | null
+          profile_id: string
+          rank: number | null
+          total_xp: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          level?: number | null
+          profile_id: string
+          rank?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          level?: number | null
+          profile_id?: string
+          rank?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_xp_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_rooms: {
+        Row: {
+          created_at: string | null
+          host_profile_id: string
+          id: string
+          is_active: boolean | null
+          participants: string[] | null
+          room_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          host_profile_id: string
+          id?: string
+          is_active?: boolean | null
+          participants?: string[] | null
+          room_id: string
+        }
+        Update: {
+          created_at?: string | null
+          host_profile_id?: string
+          id?: string
+          is_active?: boolean | null
+          participants?: string[] | null
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_rooms_host_profile_id_fkey"
+            columns: ["host_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
